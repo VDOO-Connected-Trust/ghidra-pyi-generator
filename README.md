@@ -1,0 +1,51 @@
+# Ghidra `.pyi` Generator
+
+The Ghidra `.pyi` Generator generates `.pyi` type stubs for the entire Ghidra API.
+Those stub files can later be used in an PyCharm to enhance the development experience.
+
+You can either use the stubs released [here][latest-release], or follow the instructions below to generate them yourself.
+
+To use the stubs in PyCharm, follow the instructions in [Install, uninstall, and upgrade interpreter paths][interpreter-paths].
+
+## Dependencies
+
+### Ghidra Docs
+
+To properly extract all types from Ghidra, make sure to extract the API documentation.
+
+1. Open the Ghidra CodeBrowser
+2. Go to `Help -> Ghidra API Help`
+3. Wait for Ghidra to extract the docs
+
+### Python Packages
+
+The script depends on both the `attr` and `typing` packages.
+
+```bash
+# Create a virtualenv for Ghidra packages.
+# It is important to use Python2.7 for this venv!
+# If you want, you can skip this step and use your default Python installation.
+mkvirtualenv ghidra
+ 
+# Create Jython's site-pacakges directory.
+jython_site_packages="~/.local/lib/jython2.7/site-packages"
+mkdir -p $jython_site_packages
+ 
+# Create a PTH file to point Jython to Python's site-packages directories.
+# Again, this has to be Python2.7.
+python -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
+ 
+# Use pip to install packages for Ghidra
+pip install attrs typing
+```
+
+## Creating the `.pyi` files
+
+1. Add this directory to the `Script Directories` in the Ghidra Script Manager
+2. Refresh the script list
+3. Run `generate_ghidra_pyi.py` (will be located under `IDE Helpers`)
+4. When a directory-selection dialgo appears, choose the directory you'd like to save the `.pyi` files in.
+
+
+[interpreter-paths]: https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-reloading-interpreter-paths.html
+[latest-release]: https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator/releases/latest

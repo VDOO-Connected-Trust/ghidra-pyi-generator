@@ -1,0 +1,4 @@
+[flake8]
+ignore = T001,W503
+max-line-length = 100
+per-file-ignores = generate_ghidra_pyi.py:E402
