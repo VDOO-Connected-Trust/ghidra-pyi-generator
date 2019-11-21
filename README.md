@@ -7,6 +7,25 @@ You can either use the stubs released [here][latest-release], or follow the inst
 
 To use the stubs in PyCharm, follow the instructions in [Install, uninstall, and upgrade interpreter paths][interpreter-paths].
 
+### Using The Stubs
+
+Once installed, all you need to do is import the Ghidra modules as usual, and PyCharm will do the rest.
+
+```python
+import ghidra
+```
+
+To get support for the Ghidra builtins, you need to import them as well. The typing for those exists in
+the generated `ghidra_builtins.pyi` stub. Since it is not a real Python module, importing it at runtime will fail.
+But the `.pyi` gives PyCharm all the information it needs to help you.
+
+```python
+try:
+    from ghidra_builtins import *
+except:
+    pass
+```
+
 ## Dependencies
 
 ### Ghidra Docs
