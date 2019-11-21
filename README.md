@@ -44,7 +44,7 @@ pip install attrs typing
 1. Add this directory to the `Script Directories` in the Ghidra Script Manager
 2. Refresh the script list
 3. Run `generate_ghidra_pyi.py` (will be located under `IDE Helpers`)
-4. When a directory-selection dialgo appears, choose the directory you'd like to save the `.pyi` files in.
+4. When a directory-selection dialog appears, choose the directory you'd like to save the `.pyi` files in.
 
 
 [interpreter-paths]: https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-reloading-interpreter-paths.html
