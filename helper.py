@@ -95,10 +95,15 @@ class OverloadSetDoc(object):
 
     @staticmethod
     def is_matching_overload(required_args, provided_args):
-        # type: (List[BasicType], List[BasicType])->bool
-        return all(required.is_overload_match(provided)
-                   for required, provided
-                   in zip(required_args, provided_args))
+        # type: (List[BasicType], List[BasicType]) -> bool
+        if len(required_args) != len(provided_args):
+            return False
+
+        return all(
+            required.is_overload_match(provided)
+            for required, provided
+            in zip(required_args, provided_args)
+        )
 
     def get_overload(self, param_types):
         # type: (List[BasicType]) -> Optional[MethodDoc]
