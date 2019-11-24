@@ -1,7 +1,7 @@
 # Ghidra `.pyi` Generator
 
 The Ghidra `.pyi` Generator generates `.pyi` type stubs for the entire Ghidra API.
-Those stub files can later be used in an PyCharm to enhance the development experience.
+Those stub files can later be used in PyCharm to enhance the development experience.
 
 You can either use the stubs released [here][latest-release], or follow the instructions below to generate them yourself.
 
