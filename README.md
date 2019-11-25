@@ -1,6 +1,6 @@
 # Ghidra `.pyi` Generator
 
-The Ghidra `.pyi` Generator generates `.pyi` [type stubs](https://www.python.org/dev/peps/pep-0484/)
+The Ghidra `.pyi` Generator generates `.pyi` [type stubs][pep-0484]
 for the entire Ghidra API.
 Those stub files can later be used in PyCharm to enhance the development experience.
 
@@ -26,6 +26,11 @@ try:
 except:
     pass
 ```
+
+Once done, just code & enjoy.
+
+![Pycharm Demo][pycharm-demo]
+
 
 ## Dependencies
 
@@ -69,3 +74,5 @@ pip install attrs typing
 
 [interpreter-paths]: https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-reloading-interpreter-paths.html
 [latest-release]: https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator/releases/latest
+[pep-0484]: https://www.python.org/dev/peps/pep-0484/
+[pycharm-demo]: ./media/pycharm_demo.gif
