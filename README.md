@@ -1,7 +1,8 @@
 # Ghidra `.pyi` Generator
 
-The Ghidra `.pyi` Generator generates `.pyi` type stubs for the entire Ghidra API.
-Those stub files can later be used in an PyCharm to enhance the development experience.
+The Ghidra `.pyi` Generator generates `.pyi` [type stubs](https://www.python.org/dev/peps/pep-0484/)
+for the entire Ghidra API.
+Those stub files can later be used in PyCharm to enhance the development experience.
 
 You can either use the stubs released [here][latest-release], or follow the instructions below to generate them yourself.
 
@@ -15,7 +16,7 @@ Once installed, all you need to do is import the Ghidra modules as usual, and Py
 import ghidra
 ```
 
-To get support for the Ghidra builtins, you need to import them as well. The typing for those exists in
+To get support for the Ghidra builtins, you need to import them as well. The type hints for those exist in
 the generated `ghidra_builtins.pyi` stub. Since it is not a real Python module, importing it at runtime will fail.
 But the `.pyi` gives PyCharm all the information it needs to help you.
 
