@@ -58,7 +58,13 @@ mkdir -p $jython_site_packages
  
 # Create a PTH file to point Jython to Python's site-packages directories.
 # Again, this has to be Python2.7.
+
+# Outside a virtualenv, use
 python -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
+
+# If using virtualenv, use the following instead
+python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" > $jython_site_packages/python.pth
+
  
 # Use pip to install packages for Ghidra
 pip install attrs typing
