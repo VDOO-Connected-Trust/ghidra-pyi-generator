@@ -50,7 +50,7 @@ The script depends on both the `attr` and `typing` packages.
 # Create a virtualenv for Ghidra packages.
 # It is important to use Python2.7 for this venv!
 # If you want, you can skip this step and use your default Python installation.
-mkvirtualenv ghidra
+mkvirtualenv -p python2.7 ghidra
  
 # Create Jython's site-pacakges directory.
 jython_site_packages="~/.local/lib/jython2.7/site-packages"
@@ -60,10 +60,10 @@ mkdir -p $jython_site_packages
 # Again, this has to be Python2.7.
 
 # Outside a virtualenv, use
-python -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
+python2.7 -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
 
 # If using virtualenv, use the following instead
-python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" > $jython_site_packages/python.pth
+python2.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" > $jython_site_packages/python.pth
 
  
 # Use pip to install packages for Ghidra
