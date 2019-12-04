@@ -72,13 +72,30 @@ pip install attrs typing
 
 ## Creating the `.pyi` files
 
+
+### GUI
 1. Add this directory to the `Script Directories` in the Ghidra Script Manager
 2. Refresh the script list
 3. Run `generate_ghidra_pyi.py` (will be located under `IDE Helpers`)
 4. When a directory-selection dialog appears, choose the directory you'd like to save the `.pyi` files in.
+
+### CLI
+
+```bash
+$GHIDRA_ROOT/support/analyzeHeadless /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./
+```
+
+
+## Python Package
+
+`generate_ghidra_pyi.py` generates a `setup.py` inside the directory that was selected.
+
+This allows using `pip install` to install a  [PEP 561 stub package][pep-561-stub] that is recognized by PyCharm and other tools as containing type information for the ghidra module.
+
 
 
 [interpreter-paths]: https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-reloading-interpreter-paths.html
 [latest-release]: https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator/releases/latest
 [pep-0484]: https://www.python.org/dev/peps/pep-0484/
 [pycharm-demo]: ./media/pycharm_demo.gif
+[pep-561-stub]: https://www.python.org/dev/peps/pep-0561/#stub-only-packages

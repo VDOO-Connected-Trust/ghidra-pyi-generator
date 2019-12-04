@@ -4,7 +4,7 @@ from __future__ import print_function
 import type_formatter
 
 import ghidra
-from __main__ import askDirectory, askYesNo
+from __main__ import askDirectory, askYesNo, getGhidraVersion
 
 import class_loader
 import type_extractor
@@ -50,6 +50,45 @@ def main():
     ghidra_package = type_extractor.Package.from_package(ghidra)
     type_formatter.create_type_hints(pyi_root, ghidra_package)
 
+    setup_code = """
+from setuptools import setup
+import os
+
+packages = ['ghidra-stubs']
+
+package_data = {'': ['*']}
+
+
+
+def find_stub_files():
+    result = []
+    for root, dirs, files in os.walk('ghidra-stubs'):
+        for file in files:
+            if file.endswith('.pyi'):
+                if os.path.sep in root:
+                    sub_root = root.split(os.path.sep, 1)[-1]
+                    file = os.path.join(sub_root, file)
+                result.append(file)
+    return result
+
+setup_kwargs = {
+'name': 'ghidra-stubs',
+    'version': '%s',
+    'author': 'Tamir Bahar',
+    'packages': packages,
+    'package_data': {'ghidra-stubs': find_stub_files()},
+}
+
+
+setup(**setup_kwargs)
+""" % (getGhidraVersion())
+
+    import os
+    os.rename(os.path.join(pyi_root, 'ghidra'), os.path.join(pyi_root, 'ghidra-stubs'))
+    with open(os.path.join(pyi_root, 'setup.py'), 'w') as setup_file:
+        setup_file.write(setup_code)
+
+    print("Run `pip install %s` to install ghidra-stubs package" % pyi_root)
 
 if __name__ == '__main__':
     main()
