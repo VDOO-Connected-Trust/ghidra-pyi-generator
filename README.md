@@ -53,7 +53,7 @@ The script depends on both the `attr` and `typing` packages.
 mkvirtualenv -p python2.7 ghidra
  
 # Create Jython's site-pacakges directory.
-jython_site_packages="~/.local/lib/jython2.7/site-packages"
+jython_site_packages=~/.local/lib/jython2.7/site-packages
 mkdir -p $jython_site_packages
  
 # Create a PTH file to point Jython to Python's site-packages directories.
