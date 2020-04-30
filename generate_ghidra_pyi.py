@@ -19,24 +19,7 @@ my_globals = globals().copy()
 def main():
     # type: () -> None
     if not helper.are_docs_available():
-        continue_without_docs = askYesNo(
-            'Missing API Documentation',
-            'Ghidra API documentation is missing.\n'
-            'Documentation is required to generate docstrings,\n'
-            'argument names, and to find some of the classes.\n'
-            '\n'
-            'Would you like to continue without the API documentation?',
-        )
-
-        if not continue_without_docs:
-            print('Generation canceled: Missing API documentation.')
-            print('To make the API documentation available, ', end='')
-            print('click "Ghidra API Help" in the "Help" menu.')
-            print('Once the extraction is complete, re-run this script to generate the .pyi files.')
-            return
-
-        print('Continuing without API documentation. Expect partial results.')
-
+        helper.extract_jsondoc()
     try:
         pyi_root = askDirectory('.pyi root directory', 'Select').getPath()
         print(pyi_root)

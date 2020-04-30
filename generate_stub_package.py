@@ -9,7 +9,7 @@ import os
 
 def find_stub_files():
     result = []
-    package = 'ghidra'
+    package = 'ghidra-stubs'
     for root, dirs, files in os.walk(package):
         for file in files:
             if file.endswith('.pyi'):
