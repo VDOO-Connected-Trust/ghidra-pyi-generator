@@ -1,4 +1,5 @@
 import os
+import shutil
 
 
 def generate_package(pyi_root, ghidra_version):
@@ -24,7 +25,9 @@ packages=['ghidra-stubs'],
 package_data={{'ghidra-stubs': find_stub_files()}})
     """.format(ghidra_version)
 
-    os.rename(os.path.join(pyi_root, 'ghidra'), os.path.join(pyi_root, 'ghidra-stubs'))
+    stub_folder = os.path.join(pyi_root, 'ghidra-stubs')
+    os.rename(os.path.join(pyi_root, 'ghidra'), stub_folder)
+    shutil.copy2(os.path.join(pyi_root, 'ghidra_builtins.pyi'), stub_folder)
     with open(os.path.join(pyi_root, 'setup.py'), 'w') as setup_file:
         setup_file.write(setup_code)
 
