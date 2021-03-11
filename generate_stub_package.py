@@ -19,11 +19,11 @@ def find_stub_files():
     return result
 
 setup(name= 'ghidra-stubs',
-version='{}',
+version='{ghidra_version}',
 author='Tamir Bahar',
 packages=['ghidra-stubs'],
 package_data={{'ghidra-stubs': find_stub_files()}})
-    """.format(ghidra_version)
+    """.format(ghidra_version=ghidra_version)
 
     stub_folder = os.path.join(pyi_root, 'ghidra-stubs')
     os.rename(os.path.join(pyi_root, 'ghidra'), stub_folder)
