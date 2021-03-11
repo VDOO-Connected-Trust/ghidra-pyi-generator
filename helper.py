@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+import zipfile
 from collections import defaultdict
 import json
 import os
@@ -19,6 +21,15 @@ def get_jsondoc_basepath():
         'api',
     )
 
+def extract_jsondoc():
+    zip_location = os.path.join(Application.getInstallationDirectory().getAbsolutePath(), "docs/GhidraAPI_javadoc.zip")
+    extract_dir = os.path.join(
+        Application.getUserCacheDirectory().getAbsolutePath(),
+        'GhidraAPI_javadoc',
+        Application.getApplicationVersion())
+
+    zip_file = zipfile.ZipFile(zip_location)
+    zip_file.extractall(extract_dir)
 
 def are_docs_available():
     return os.path.exists(get_jsondoc_basepath())

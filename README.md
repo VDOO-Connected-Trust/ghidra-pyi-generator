@@ -50,20 +50,20 @@ The script depends on both the `attr` and `typing` packages.
 # Create a virtualenv for Ghidra packages.
 # It is important to use Python2.7 for this venv!
 # If you want, you can skip this step and use your default Python installation.
-mkvirtualenv ghidra
+mkvirtualenv -p python2.7 ghidra
  
 # Create Jython's site-pacakges directory.
-jython_site_packages="~/.local/lib/jython2.7/site-packages"
+jython_site_packages=~/.local/lib/jython2.7/site-packages
 mkdir -p $jython_site_packages
  
 # Create a PTH file to point Jython to Python's site-packages directories.
 # Again, this has to be Python2.7.
 
 # Outside a virtualenv, use
-python -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
+python2.7 -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
 
 # If using virtualenv, use the following instead
-python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" > $jython_site_packages/python.pth
+python2.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" > $jython_site_packages/python.pth
 
  
 # Use pip to install packages for Ghidra
@@ -72,13 +72,30 @@ pip install attrs typing
 
 ## Creating the `.pyi` files
 
+
+### GUI
 1. Add this directory to the `Script Directories` in the Ghidra Script Manager
 2. Refresh the script list
 3. Run `generate_ghidra_pyi.py` (will be located under `IDE Helpers`)
 4. When a directory-selection dialog appears, choose the directory you'd like to save the `.pyi` files in.
+
+### CLI
+
+```bash
+$GHIDRA_ROOT/support/analyzeHeadless /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./
+```
+
+
+## Python Package
+
+`generate_ghidra_pyi.py` generates a `setup.py` inside the directory that was selected.
+
+This allows using `pip install` to install a  [PEP 561 stub package][pep-561-stub] that is recognized by PyCharm and other tools as containing type information for the ghidra module.
+
 
 
 [interpreter-paths]: https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-reloading-interpreter-paths.html
 [latest-release]: https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator/releases/latest
 [pep-0484]: https://www.python.org/dev/peps/pep-0484/
 [pycharm-demo]: ./media/pycharm_demo.gif
+[pep-561-stub]: https://www.python.org/dev/peps/pep-0561/#stub-only-packages
