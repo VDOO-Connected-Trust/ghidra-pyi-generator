@@ -2,7 +2,7 @@ import os
 import shutil
 
 
-def generate_package(pyi_root, ghidra_version):
+def generate_package(pyi_root, ghidra_version, stub_version="DEV"):
 
     setup_code = """
 from setuptools import setup
@@ -19,11 +19,12 @@ def find_stub_files():
     return result
 
 setup(name= 'ghidra-stubs',
-version='{ghidra_version}',
+version='{ghidra_version}_{stub_version}',
 author='Tamir Bahar',
 packages=['ghidra-stubs'],
 package_data={{'ghidra-stubs': find_stub_files()}})
-    """.format(ghidra_version=ghidra_version)
+    """.format(ghidra_version=ghidra_version,
+               stub_version=stub_version)
 
     stub_folder = os.path.join(pyi_root, 'ghidra-stubs')
     os.rename(os.path.join(pyi_root, 'ghidra'), stub_folder)
