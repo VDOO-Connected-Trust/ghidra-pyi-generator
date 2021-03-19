@@ -45,16 +45,13 @@ jobs:
         run: >-
           python -m
           pip install
-          build
+          wheel
           --user
 
       - name: Build a binary wheel and a source tarball
-        run: >-
-          python -m
-          build
-          --sdist
-          --wheel
-          --outdir dist/
+        run: |
+          python setup.py bdist_wheel --universal
+          python setup.py sdist
 
 # TODO: Setup publishing to PyPI by creating package and token and adding to GitHub secrets
 #      - name: Publish distribution 📦 to PyPI
