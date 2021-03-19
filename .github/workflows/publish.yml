@@ -22,19 +22,18 @@ jobs:
           version: "9.2.2"
 
       - name: Prepare Jython Environment
-        run: >-
-          mkvirtualenv -p python2.7 ghidra
+        run: |
           jython_site_packages=~/.local/lib/jython2.7/site-packages
-          mkdir -p $jython_site_packages
-          python2.7 -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
+          mkdir -p "$jython_site_packages"
+          python2.7 -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > "$jython_site_packages/python.pth"
           pip2.7 install attrs typing
 
       - name: Build Package
-        run: >-
+        run: |
           "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ github.ref }}
 
       - name: Check Package Results # analyzeHeadless doesn't return with a nonzero exit code on script failure
-        run: >-
+        run: |
           test -f setup.py
           test -d ghidra-stubs
 
