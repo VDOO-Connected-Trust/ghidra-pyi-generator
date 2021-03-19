@@ -17,30 +17,27 @@ jobs:
         with:
           java-version: 1.11
 
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "2.7"
+
       - uses: er28-0652/setup-ghidra@master
         with:
           version: "9.2.2"
 
       - name: Prepare Jython Environment
-        run: |
-          jython_site_packages=~/.local/lib/jython2.7/site-packages
-          mkdir -p "$jython_site_packages"
-          python2.7 -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > "$jython_site_packages/python.pth"
-          pip2.7 install attrs typing
+        run:
+          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing
 
       - name: Build Package
         run: |
           "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ github.ref }}
-
-      - name: Check Package Results # analyzeHeadless doesn't return with a nonzero exit code on script failure
-        run: |
-          test -f setup.py
+          test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
           test -d ghidra-stubs
 
-
-      - uses: actions/checkout@master
       - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.7
 
@@ -50,6 +47,7 @@ jobs:
           pip install
           build
           --user
+
       - name: Build a binary wheel and a source tarball
         run: >-
           python -m
