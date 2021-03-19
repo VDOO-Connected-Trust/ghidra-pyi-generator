@@ -6,9 +6,18 @@ Those stub files can later be used in PyCharm to enhance the development experie
 
 You can either use the stubs released [here][latest-release], or follow the instructions below to generate them yourself.
 
-To use the stubs in PyCharm, follow the instructions in [Install, uninstall, and upgrade interpreter paths][interpreter-paths].
 
-### Using The Stubs
+## Using The Stubs
+
+### Installation 
+
+The release contains  [PEP 0561 stub package][pep-0561], which can simply be installed with `pip install ghidra-stubs*.whl`
+into the environment in which the real `ghidra` module is available. Any conformant tool will then use the stub package
+for type analysis purposes.  
+
+If you want to manually add the stub files to PyCharm, follow the instructions in [Install, uninstall, and upgrade interpreter paths][interpreter-paths].
+
+### Usage
 
 Once installed, all you need to do is import the Ghidra modules as usual, and PyCharm will do the rest.
 
@@ -22,10 +31,26 @@ But the `.pyi` gives PyCharm all the information it needs to help you.
 
 ```python
 try:
-    from ghidra_builtins import *
+    from ghidra.ghidra_builtins import *
 except:
     pass
 ```
+
+If you are using [ghidra_bridge](https://github.com/justfoxing/ghidra_bridge) from a Python 3 environment where no real `ghidra` module
+exists you can use a snippet like the following:
+
+```python
+import typing
+if typing.TYPE_CHECKING:
+    import ghidra
+    from ghidra.ghidra_builtins import *
+else:
+    b = ghidra_bridge.GhidraBridge(namespace=globals())
+
+# actual code follows here
+```
+
+`typing.TYPE_CHECKING` is a special value that is always `False` at runtime but `True` during any kind of type checking or completion.
 
 Once done, just code & enjoy.
 
