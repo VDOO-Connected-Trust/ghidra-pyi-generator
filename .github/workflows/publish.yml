@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Package
         run: |
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ github.ref }}
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${GITHUB_REF#refs/*/}
           test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
           test -d ghidra-stubs
 
