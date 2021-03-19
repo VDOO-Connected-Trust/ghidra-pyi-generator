@@ -47,7 +47,7 @@ jobs:
 
       - name: Build Package
         run: >-
-          $GHIDRA_ROOT/support/analyzeHeadless /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ github.ref }}
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ github.ref }}
 
       - uses: actions/checkout@master
       - name: Set up Python 3.7
