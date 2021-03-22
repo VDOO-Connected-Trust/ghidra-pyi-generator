@@ -22,6 +22,7 @@ setup(name= 'ghidra-stubs',
 version='{ghidra_version}.{stub_version}',
 author='Tamir Bahar',
 packages=['ghidra-stubs'],
+url="https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator",
 package_data={{'ghidra-stubs': find_stub_files()}})
     """.format(ghidra_version=ghidra_version,
                stub_version=stub_version)
