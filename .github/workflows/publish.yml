@@ -53,11 +53,11 @@ jobs:
           python setup.py bdist_wheel --universal
           python setup.py sdist
 
-# TODO: Setup publishing to PyPI by creating package and token and adding to GitHub secrets
-#      - name: Publish distribution 📦 to PyPI
-#        uses: pypa/gh-action-pypi-publish@master
-#        with:
-#          password: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
 
 
       - name: Release on GitHub
