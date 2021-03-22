@@ -1,0 +1,68 @@
+name: Publish Tagged Commit to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+
+jobs:
+  build-n-publish:
+    name: Build and publish Python Package
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "2.7"
+
+      - uses: er28-0652/setup-ghidra@master
+        with:
+          version: "9.2.2"
+
+      - name: Prepare Jython Environment
+        run:
+          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing
+
+      - name: Build Package
+        run: |
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${GITHUB_REF#refs/*/}
+          test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
+          test -d ghidra-stubs
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install pypa/build
+        run: >-
+          python -m
+          pip install
+          wheel
+          --user
+
+      - name: Build a binary wheel and a source tarball
+        run: |
+          python setup.py bdist_wheel --universal
+          python setup.py sdist
+
+# TODO: Setup publishing to PyPI by creating package and token and adding to GitHub secrets
+#      - name: Publish distribution 📦 to PyPI
+#        uses: pypa/gh-action-pypi-publish@master
+#        with:
+#          password: ${{ secrets.PYPI_API_TOKEN }}
+
+
+      - name: Release on GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

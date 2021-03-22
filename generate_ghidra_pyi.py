@@ -4,6 +4,11 @@ from __future__ import print_function
 import type_formatter
 
 import ghidra
+# Make this script work with the stubs in an IDE
+try:
+    from ghidra.ghidra_builtins import *
+except:
+    pass
 from __main__ import askDirectory, askYesNo, getGhidraVersion
 
 from generate_stub_package import generate_package
@@ -35,7 +40,16 @@ def main():
     ghidra_package = type_extractor.Package.from_package(ghidra)
     type_formatter.create_type_hints(pyi_root, ghidra_package)
 
-    generate_package(pyi_root, getGhidraVersion())
+    package_version = "DEV"
+    if isRunningHeadless():
+        # We are running in an headless environment and this might be an automated CI build
+        # so we try getting an extra argument that is supposed to be the git commit tag so the package version is a combination
+        # of the ghidra version and the version of the stub generating code
+        try:
+            package_version = askString("Package version", "Please specify package version")
+        except:
+            pass
+    generate_package(pyi_root, getGhidraVersion(), stub_version=package_version)
 
 if __name__ == '__main__':
     main()

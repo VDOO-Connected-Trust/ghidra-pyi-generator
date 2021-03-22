@@ -39,6 +39,8 @@ def get_members(obj):
         except java.lang.IllegalArgumentException:
             # Some values cannot be converted to Python types, so we are stuck.
             pass
+        except java.lang.NoClassDefFoundError:
+            pass
 
     # If something is in `__dict__` we want it directly from there.
     # Attribute resolution destroys reflection info when class fields are involved.
@@ -86,10 +88,10 @@ class Overload(object):
         if ctor_for is not None:
             return_type = ctor_for
         else:
-            return_type = reflected_args.data.getReturnType()
+            return_type = reflected_args.method.getReturnType()
 
         return_type = BasicType.from_type(return_type)
-        argument_types = map(BasicType.from_type, reflected_args.data.getParameterTypes())
+        argument_types = map(BasicType.from_type, reflected_args.method.getParameterTypes())
 
         argument_names = get_argument_names(argument_types, docs)
 
