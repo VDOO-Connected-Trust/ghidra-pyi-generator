@@ -3,7 +3,7 @@ name: Publish Tagged Commit to PyPI
 on:
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Package
         run: |
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${GITHUB_REF#refs/*/}
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${GITHUB_REF#refs/*/v}
           test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
           test -d ghidra-stubs
 
