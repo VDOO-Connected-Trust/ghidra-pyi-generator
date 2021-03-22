@@ -11,7 +11,7 @@ You can either use the stubs released [here][latest-release], or follow the inst
 
 ### Installation 
 
-The release contains  [PEP 0561 stub package][pep-0561], which can simply be installed with `pip install ghidra-stubs*.whl`
+The release contains  [PEP 0561 stub package][pep-561-stub], which can simply be installed with `pip install ghidra-stubs*.whl`
 into the environment in which the real `ghidra` module is available. Any conformant tool will then use the stub package
 for type analysis purposes.  
 
