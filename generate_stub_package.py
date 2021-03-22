@@ -19,7 +19,7 @@ def find_stub_files():
     return result
 
 setup(name= 'ghidra-stubs',
-version='{ghidra_version}_{stub_version}',
+version='{ghidra_version}.{stub_version}',
 author='Tamir Bahar',
 packages=['ghidra-stubs'],
 package_data={{'ghidra-stubs': find_stub_files()}})
