@@ -24,7 +24,7 @@ jobs:
 
       - uses: er28-0652/setup-ghidra@master
         with:
-          version: "9.2.2"
+          version: "10.1.2"
 
       - name: Prepare Jython Environment
         run:
