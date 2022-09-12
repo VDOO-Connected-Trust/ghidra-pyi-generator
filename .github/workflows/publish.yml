@@ -4,10 +4,58 @@ on:
   push:
     tags:
       - 'v*.*.*'
-
+  workflow_dispatch:
+    inputs:
+      workflow-ghidra-ver:
+        description: 'Specify Ghidra Version to Build'
+        required: true
+        type: string
+        default: 'latest'
+  schedule:
+    - cron: "0 13 * * 3"
 
 jobs:
+  set-ghidra-version:
+    runs-on: ubuntu-20.04
+    outputs:
+      ghidra-ver: ${{ env.GHIDRA_VER }}
+    steps:
+      - if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
+        name: Get Latest Ghidra Version
+        id: get_latest_ghidra_ver
+        uses: pozetroninc/github-action-get-latest-release@v0.6.0
+        with:
+          repository: NationalSecurityAgency/ghidra
+          excludes: prerelease, draft
+      - name: Set Ghidra Version from Latest
+        if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
+        id: format_ghidra_ver
+        run: |
+          echo "GHIDRA_VER=$(echo ${{steps.get_latest_ghidra_ver.outputs.release}} | cut -d_ -f2)" >> $GITHUB_ENV
+      - name: Set Ghidra Version from Input
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest'
+        run: |             
+          echo "GHIDRA_VER=$(echo ${{github.event.inputs.workflow-ghidra-ver}})" >> $GITHUB_ENV
+  check-release:
+    needs:
+      - set-ghidra-version
+    runs-on: ubuntu-20.04
+    outputs:
+      ghidra-ver: ${{ needs.set-ghidra-version.outputs.ghidra-ver }}
+      already-exists: ${{ contains( steps.self.outputs.release, needs.set-ghidra-version.outputs.ghidra-ver) }}
+    steps:
+      - id: self
+        uses: pozetroninc/github-action-get-latest-release@v0.6.0
+        with:
+          repository: ${{ github.repository }}
+      - name: Print Versions and Already Exists
+        run: |
+          echo "${{ needs.set-ghidra-version.outputs.ghidra-ver }}  ${{steps.self.outputs.release }}"
+          echo "already exists ${{ contains( steps.self.outputs.release, needs.set-ghidra-version.outputs.ghidra-ver) }}"
   build-n-publish:
+    needs: 
+      - check-release
+    if: needs.check-release.outputs.already-exists == 'false' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest')
     name: Build and publish Python Package
     runs-on: ubuntu-20.04
     steps:
@@ -24,7 +72,7 @@ jobs:
 
       - uses: er28-0652/setup-ghidra@master
         with:
-          version: "10.1.2"
+          version: "${{ needs.check-release.outputs.ghidra-ver }}"
 
       - name: Prepare Jython Environment
         run:
@@ -64,5 +112,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ./dist/*
+          tag_name: "v1.0.3-${{ needs.check-release.outputs.ghidra-ver }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
