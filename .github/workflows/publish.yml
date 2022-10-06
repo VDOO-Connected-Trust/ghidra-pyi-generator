@@ -15,10 +15,12 @@ on:
     - cron: "0 13 * * 3"
 
 jobs:
-  set-ghidra-version:
+  set-versions:
     runs-on: ubuntu-20.04
     outputs:
       ghidra-ver: ${{ env.GHIDRA_VER }}
+      pyi-ver: ${{ env.PYI_VER }}
+      pyi-rel-ver: ${{ env.PYI_REL_VER }}
     steps:
       - if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
         name: Get Latest Ghidra Version
@@ -36,13 +38,22 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest'
         run: |             
           echo "GHIDRA_VER=$(echo ${{github.event.inputs.workflow-ghidra-ver}})" >> $GITHUB_ENV
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Get Ghidra Stubs Version
+        id: get_pyi_ver
+        run: |
+          echo "PYI_VER=$(python version.py)" >> $GITHUB_ENV
+      - name: Get Ghidra Stubs Full Release Version
+        id: get_pyi_rel_ver
+        run: |
+          echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
   check-release:
     needs:
-      - set-ghidra-version
+      - set-versions
     runs-on: ubuntu-20.04
-    outputs:
-      ghidra-ver: ${{ needs.set-ghidra-version.outputs.ghidra-ver }}
-      already-exists: ${{ contains( steps.self.outputs.release, needs.set-ghidra-version.outputs.ghidra-ver) }}
+    outputs:      
+      already-exists: ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}
     steps:
       - id: self
         uses: pozetroninc/github-action-get-latest-release@v0.6.0
@@ -50,10 +61,11 @@ jobs:
           repository: ${{ github.repository }}
       - name: Print Versions and Already Exists
         run: |
-          echo "${{ needs.set-ghidra-version.outputs.ghidra-ver }}  ${{steps.self.outputs.release }}"
-          echo "already exists ${{ contains( steps.self.outputs.release, needs.set-ghidra-version.outputs.ghidra-ver) }}"
+          echo "Ghidra ver: ${{ needs.set-versions.outputs.ghidra-ver }} PYI ver: ${{ needs.set-versions.outputs.pyi-ver }} PYI Release: ${{needs.set-versions.outputs.pyi-rel-ver}} Current Release: ${{steps.self.outputs.release }}"
+          echo "already exists ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}"
   build-n-publish:
     needs: 
+      - set-versions
       - check-release
     if: needs.check-release.outputs.already-exists == 'false' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest')
     name: Build and publish Python Package
@@ -72,7 +84,7 @@ jobs:
 
       - uses: er28-0652/setup-ghidra@master
         with:
-          version: "${{ needs.check-release.outputs.ghidra-ver }}"
+          version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
       - name: Prepare Jython Environment
         run:
@@ -80,7 +92,7 @@ jobs:
 
       - name: Build Package
         run: |
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${GITHUB_REF#refs/*/v}
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ needs.set-versions.outputs.pyi-ver }}
           test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
           test -d ghidra-stubs
 
@@ -102,16 +114,18 @@ jobs:
           python setup.py sdist
 
 
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+      # - name: Publish distribution 📦 to PyPI
+      #   uses: pypa/gh-action-pypi-publish@master
+      #   with:
+      #     password: ${{ secrets.PYPI_API_TOKEN }}
 
 
       - name: Release on GitHub
         uses: softprops/action-gh-release@v1
         with:
           files: ./dist/*
-          tag_name: "v1.0.3-${{ needs.check-release.outputs.ghidra-ver }}"
+          tag_name: "v${{ needs.set-versions.outputs.pyi-rel-ver }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+          
