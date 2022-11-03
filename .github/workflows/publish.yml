@@ -87,8 +87,9 @@ jobs:
           version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
       - name: Prepare Jython Environment
-        run:
-          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing
+        run: | 
+          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing                    
+          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages" attrs typing
 
       - name: Build Package
         run: |
