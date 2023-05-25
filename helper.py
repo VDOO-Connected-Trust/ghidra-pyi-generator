@@ -41,7 +41,7 @@ def get_jsondoc(class_name):
 
     try:
         with open(json_path) as f:
-            return json.load(f)
+            return json.load(f).encode("utf8")
     except (IOError, KeyError):
         pass
 
