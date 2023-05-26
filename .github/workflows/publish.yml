@@ -67,8 +67,8 @@ jobs:
       - name: Copy Jython envirobment
         run: |
           mkdir jython
-          cp "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" jython/2.7.2
-          cp "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" jython/2.7.3
+          cp -r "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" jython/2.7.2
+          cp -r "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" jython/2.7.3
           
       - uses: actions/upload-artifact@v3
         with:
