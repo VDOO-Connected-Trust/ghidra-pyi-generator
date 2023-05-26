@@ -48,26 +48,10 @@ jobs:
         id: get_pyi_rel_ver
         run: |
           echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
-  check-release:
-    needs:
-      - set-versions
-    runs-on: ubuntu-20.04
-    outputs:      
-      already-exists: ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}
-    steps:
-      - id: self
-        uses: pozetroninc/github-action-get-latest-release@v0.6.0
-        with:
-          repository: ${{ github.repository }}
-      - name: Print Versions and Already Exists
-        run: |
-          echo "Ghidra ver: ${{ needs.set-versions.outputs.ghidra-ver }} PYI ver: ${{ needs.set-versions.outputs.pyi-ver }} PYI Release: ${{needs.set-versions.outputs.pyi-rel-ver}} Current Release: ${{steps.self.outputs.release }}"
-          echo "already exists ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}"
+
   build-n-publish:
     needs: 
       - set-versions
-      - check-release
-    if: needs.check-release.outputs.already-exists == 'false' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest')
     name: Build and publish Python Package
     runs-on: ubuntu-20.04
     steps:
@@ -90,43 +74,13 @@ jobs:
         run: | 
           pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing                    
           pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages" attrs typing
-
-      - name: Build Package
-        run: |
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript generate_ghidra_pyi.py ./ ${{ needs.set-versions.outputs.pyi-ver }}
-          test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
-          test -d ghidra-stubs
-
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-
-      - name: Install pypa/build
-        run: >-
-          python -m
-          pip install
-          wheel
-          --user
-
-      - name: Build a binary wheel and a source tarball
-        run: |
-          python setup.py bdist_wheel --universal
-          python setup.py sdist
-
-
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-
-
-      - name: Release on GitHub
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./dist/*
-          tag_name: "v${{ needs.set-versions.outputs.pyi-rel-ver }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-          
+      - uses: actions/upload-artifact@v3
+        with:
+          name: jython-2.7.2-site-packages
+          path: "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: jython-2.7.3-site-packages
+          path: "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
