@@ -41,7 +41,7 @@ def get_jsondoc(class_name):
 
     try:
         with open(json_path) as f:
-            return json.load(f).encode("utf8")
+            return json.load(f)
     except (IOError, KeyError):
         pass
 
@@ -76,7 +76,7 @@ class ParamDoc(object):
 
     @property
     def comment(self):
-        return self.jsondoc['comment']
+        return self.jsondoc['comment'].encode("utf8")
 
 
 class MethodDoc(object):
@@ -85,7 +85,7 @@ class MethodDoc(object):
 
     @property
     def comment(self):
-        return self.jsondoc['comment']
+        return self.jsondoc['comment'].encode("utf8")
 
     @property
     def return_type(self):
@@ -93,7 +93,7 @@ class MethodDoc(object):
 
     @property
     def javadoc(self):
-        return self.jsondoc['javadoc']
+        return self.jsondoc['javadoc'].encode("utf8")
 
     @property
     def params(self):
@@ -162,7 +162,7 @@ class ClassDoc(object):
 
     @property
     def comment(self):
-        return self.jsondoc['comment']
+        return self.jsondoc['comment'].encode("utf8")
 
     @property
     def extends(self):
