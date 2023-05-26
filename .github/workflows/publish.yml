@@ -57,7 +57,7 @@ jobs:
 
       - uses: er28-0652/setup-ghidra@master
         with:
-          version: "${{ needs.set-versions.outputs.ghidra-ver }}"
+          version: "10.3"
 
       - name: Prepare Jython Environment
         run: | 
