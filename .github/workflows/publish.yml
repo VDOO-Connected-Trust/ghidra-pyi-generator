@@ -1,18 +1,7 @@
-name: Publish Tagged Commit to PyPI
+name: Hack around to get artifacts
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
-  workflow_dispatch:
-    inputs:
-      workflow-ghidra-ver:
-        description: 'Specify Ghidra Version to Build'
-        required: true
-        type: string
-        default: 'latest'
-  schedule:
-    - cron: "0 13 * * 3"
 
 jobs:
   set-versions:
@@ -49,7 +38,7 @@ jobs:
         run: |
           echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
 
-  build-n-publish:
+  get-packages:
     needs: 
       - set-versions
     name: Build and publish Python Package
