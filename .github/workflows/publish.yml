@@ -64,12 +64,13 @@ jobs:
           pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing                    
           pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages" attrs typing
           
+      - name: Copy Jython envirobment
+        run: |
+          mkdir jython
+          cp "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" jython/2.7.2
+          cp "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" jython/2.7.3
+          
       - uses: actions/upload-artifact@v3
         with:
-          name: jython-2.7.2-site-packages
-          path: "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: jython-2.7.3-site-packages
-          path: "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
+          name: jython-site-packages
+          path: jython
