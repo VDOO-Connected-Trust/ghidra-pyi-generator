@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Get Latest Ghidra Version
         id: get_latest_ghidra_ver
-        uses: pozetroninc/github-action-get-latest-release@v0.6.0
+        uses: pozetroninc/github-action-get-latest-release@v0.7.0
         with:
           repository: NationalSecurityAgency/ghidra
           excludes: prerelease, draft
