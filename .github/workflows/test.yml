@@ -92,12 +92,6 @@ jobs:
           python setup.py bdist_wheel --universal
           python setup.py sdist
 
-      - name: Upload stubs as artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ghidra-stubs
-          path: ghidra-stubs
-
       - name: Upload dist as artifacts
         uses: actions/upload-artifact@v3
         with:
