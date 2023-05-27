@@ -70,29 +70,20 @@ To properly extract all types from Ghidra, make sure to extract the API document
 ### Python Packages
 
 The script depends on both the `attr` and `typing` packages.
+They are now vendored under the `vendor` directory as Python2.7 support is gradually
+being dropped from the ecosystem, making it hard to install and fetch packages.
 
 ```bash
-# Create a virtualenv for Ghidra packages.
-# It is important to use Python2.7 for this venv!
-# If you want, you can skip this step and use your default Python installation.
-mkvirtualenv -p python2.7 ghidra
  
 # Create Jython's site-pacakges directory.
 jython_site_packages=~/.local/lib/jython2.7/site-packages
 mkdir -p $jython_site_packages
  
-# Create a PTH file to point Jython to Python's site-packages directories.
-# Again, this has to be Python2.7.
+# Create a PTH file to point Jython to our vendored site-packages
 
 # Outside a virtualenv, use
-python2.7 -c "import site; print(site.getusersitepackages()); print(site.getsitepackages()[-1])" > $jython_site_packages/python.pth
+echo "$(realpath ./vendor)" > $jython_site_packages/python.pth
 
-# If using virtualenv, use the following instead
-python2.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" > $jython_site_packages/python.pth
-
- 
-# Use pip to install packages for Ghidra
-pip install attrs typing
 ```
 
 ## Creating the `.pyi` files
