@@ -67,10 +67,10 @@ jobs:
       - name: Prepare Jython Environment
         run: | 
           mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages/*"
+          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages/"
           
           mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages/*"
+          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages/"
 
       - name: Build Package
         run: |
