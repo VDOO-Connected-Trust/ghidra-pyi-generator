@@ -18,15 +18,13 @@ jobs:
       pyi-ver: ${{ env.PYI_VER }}
       pyi-rel-ver: ${{ env.PYI_REL_VER }}
     steps:
-      - if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
-        name: Get Latest Ghidra Version
+      - name: Get Latest Ghidra Version
         id: get_latest_ghidra_ver
         uses: pozetroninc/github-action-get-latest-release@v0.6.0
         with:
           repository: NationalSecurityAgency/ghidra
           excludes: prerelease, draft
       - name: Set Ghidra Version from Latest
-        if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
         id: format_ghidra_ver
         run: |
           echo "GHIDRA_VER=$(echo ${{steps.get_latest_ghidra_ver.outputs.release}} | cut -d_ -f2)" >> $GITHUB_ENV
