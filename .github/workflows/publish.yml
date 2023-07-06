@@ -71,16 +71,13 @@ jobs:
     name: Build and publish Python Package
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 1.11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.11
+          distribution: 'temurin'
+          java-version: '11'
 
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "2.7"
 
       - uses: er28-0652/setup-ghidra@master
         with:
@@ -88,8 +85,11 @@ jobs:
 
       - name: Prepare Jython Environment
         run: | 
-          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages" attrs typing                    
-          pip2.7 install --target="$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages" attrs typing
+          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
+          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages/"
+          
+          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
+          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages/"
 
       - name: Build Package
         run: |
@@ -97,10 +97,10 @@ jobs:
           test -f setup.py # check manually, because analyzeHeadless doesn't fail on script failure
           test -d ghidra-stubs
 
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.7
+          python-version: 3.11
 
       - name: Install pypa/build
         run: >-
@@ -114,6 +114,11 @@ jobs:
           python setup.py bdist_wheel --universal
           python setup.py sdist
 
+      - name: Upload dist as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
 
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@master

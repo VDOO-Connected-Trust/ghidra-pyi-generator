@@ -44,7 +44,7 @@ jobs:
           echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
 
   build:
-    needs: 
+    needs:
       - set-versions
     name: Build and publish Python Package
     runs-on: ubuntu-20.04
