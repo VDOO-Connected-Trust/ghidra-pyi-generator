@@ -1,9 +1,7 @@
-name: Publish Tagged Commit to PyPI
+name: Test Generation Code
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       workflow-ghidra-ver:
@@ -11,8 +9,6 @@ on:
         required: true
         type: string
         default: 'latest'
-  schedule:
-    - cron: "0 13 * * 3"
 
 jobs:
   set-versions:
@@ -22,15 +18,13 @@ jobs:
       pyi-ver: ${{ env.PYI_VER }}
       pyi-rel-ver: ${{ env.PYI_REL_VER }}
     steps:
-      - if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
-        name: Get Latest Ghidra Version
+      - name: Get Latest Ghidra Version
         id: get_latest_ghidra_ver
-        uses: pozetroninc/github-action-get-latest-release@v0.6.0
+        uses: pozetroninc/github-action-get-latest-release@v0.7.0
         with:
           repository: NationalSecurityAgency/ghidra
           excludes: prerelease, draft
       - name: Set Ghidra Version from Latest
-        if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
         id: format_ghidra_ver
         run: |
           echo "GHIDRA_VER=$(echo ${{steps.get_latest_ghidra_ver.outputs.release}} | cut -d_ -f2)" >> $GITHUB_ENV
@@ -48,26 +42,10 @@ jobs:
         id: get_pyi_rel_ver
         run: |
           echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
-  check-release:
+
+  build:
     needs:
       - set-versions
-    runs-on: ubuntu-20.04
-    outputs:      
-      already-exists: ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}
-    steps:
-      - id: self
-        uses: pozetroninc/github-action-get-latest-release@v0.6.0
-        with:
-          repository: ${{ github.repository }}
-      - name: Print Versions and Already Exists
-        run: |
-          echo "Ghidra ver: ${{ needs.set-versions.outputs.ghidra-ver }} PYI ver: ${{ needs.set-versions.outputs.pyi-ver }} PYI Release: ${{needs.set-versions.outputs.pyi-rel-ver}} Current Release: ${{steps.self.outputs.release }}"
-          echo "already exists ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}"
-  build-n-publish:
-    needs: 
-      - set-versions
-      - check-release
-    if: needs.check-release.outputs.already-exists == 'false' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest')
     name: Build and publish Python Package
     runs-on: ubuntu-20.04
     steps:
@@ -119,19 +97,3 @@ jobs:
         with:
           name: dist
           path: dist
-
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-
-
-      - name: Release on GitHub
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./dist/*
-          tag_name: "v${{ needs.set-versions.outputs.pyi-rel-ver }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          
