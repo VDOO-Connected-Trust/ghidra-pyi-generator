@@ -70,6 +70,9 @@ jobs:
     if: needs.check-release.outputs.already-exists == 'false' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest')
     name: Build and publish Python Package
     runs-on: ubuntu-20.04
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 1.11
@@ -121,9 +124,7 @@ jobs:
           path: dist
 
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1
 
 
       - name: Release on GitHub
