@@ -73,6 +73,8 @@ jobs:
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
+      # Required for publishing a release on GitHub
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 1.11
