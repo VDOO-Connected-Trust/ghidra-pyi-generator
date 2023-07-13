@@ -23,7 +23,10 @@ version='{ghidra_version}.{stub_version}',
 author='Tamir Bahar',
 packages=['ghidra-stubs'],
 url="https://github.com/VDOO-Connected-Trust/ghidra-pyi-generator",
-package_data={{'ghidra-stubs': find_stub_files()}})
+package_data={{'ghidra-stubs': find_stub_files()}},
+long_description=open('README.md').read(),
+long_description_content_type='text/markdown',
+)
     """.format(ghidra_version=ghidra_version,
                stub_version=stub_version)
 
