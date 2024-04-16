@@ -143,7 +143,11 @@ class OverloadSet(object):
 
     @property
     def requires(self):
-        return set().union(*(overload.requires for overload in self.overloads))
+        requirements = set().union(*(overload.requires for overload in self.overloads))
+        if len(self.overloads) > 1:
+            requirements.add(('typing', 'overload'))
+
+        return requirements
 
 
 @attr.s
