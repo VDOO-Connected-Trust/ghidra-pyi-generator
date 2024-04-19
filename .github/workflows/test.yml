@@ -1,6 +1,7 @@
 name: Test Generation Code
 
 on:
+  # This should trigger for Pull Requests, right?
   push:
   workflow_dispatch:
     inputs:
