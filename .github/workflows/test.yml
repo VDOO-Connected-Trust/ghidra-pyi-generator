@@ -1,8 +1,8 @@
 name: Test Generation Code
 
 on:
-  # This should trigger for Pull Requests, right?
   push:
+  pull_request:
   workflow_dispatch:
     inputs:
       workflow-ghidra-ver:
