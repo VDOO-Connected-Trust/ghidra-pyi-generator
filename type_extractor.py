@@ -195,10 +195,23 @@ class Modifier(object):
 
 
 def pretty_repr(value):
+    # type: (Any) -> str
     if isinstance(value, long):  # NOQA: F821
         return hex(value)
 
-    return repr(value)
+    types = [] # type: list[type]
+    types = [
+        bool,
+        float,
+        int,
+        str,
+        unicode,
+    ]
+    for t in types:
+        if isinstance(value, t):
+            return repr(value)
+
+    return ''
 
 
 @attr.s
@@ -222,7 +235,7 @@ class Field(object):
             try:
                 value = getattr(cls, name)
                 value_repr = pretty_repr(value)
-                has_value = True
+                has_value = value_repr != ''
             except java.lang.IllegalArgumentException:
                 pass
 
