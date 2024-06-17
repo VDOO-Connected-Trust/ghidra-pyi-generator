@@ -3,8 +3,6 @@ name: Test Generation Code
 on:
   pull_request:
   push:
-    branches:
-      - master
   workflow_dispatch:
     inputs:
       workflow-ghidra-ver:
