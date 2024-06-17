@@ -22,35 +22,18 @@ jobs:
       pyi-ver: ${{ env.PYI_VER }}
       pyi-rel-ver: ${{ env.PYI_REL_VER }}
     steps:
-      - if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
-        name: Get Latest Ghidra Version
-        id: get_latest_ghidra_ver
-        uses: pozetroninc/github-action-get-latest-release@v0.6.0
-        with:
-          repository: NationalSecurityAgency/ghidra
-          excludes: prerelease, draft
-      - name: Set Ghidra Version from Latest
-        if: github.event_name == 'schedule' || github.event.inputs.workflow-ghidra-ver == 'latest'
-        id: format_ghidra_ver
-        run: |
-          echo "GHIDRA_VER=$(echo ${{steps.get_latest_ghidra_ver.outputs.release}} | cut -d_ -f2)" >> $GITHUB_ENV
+      - name: Set Ghidra Version to latest
+        run: echo "GHIDRA_VER=latest" >> $GITHUB_ENV
       - name: Set Ghidra Version from Input
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest'
-        run: |             
-          echo "GHIDRA_VER=$(echo ${{github.event.inputs.workflow-ghidra-ver}})" >> $GITHUB_ENV
-      - name: Checkout repo
-        uses: actions/checkout@v3
+        run: echo "GHIDRA_VER=$(echo ${{github.event.inputs.workflow-ghidra-ver}})" >> $GITHUB_ENV
       - name: Get Ghidra Stubs Version
-        id: get_pyi_ver
-        run: |
-          echo "PYI_VER=$(python version.py)" >> $GITHUB_ENV
+        run: echo "PYI_VER=$(python version.py)" >> $GITHUB_ENV
       - name: Get Ghidra Stubs Full Release Version
-        id: get_pyi_rel_ver
-        run: |
-          echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
+        run: echo "PYI_REL_VER=$GHIDRA_VER.$PYI_VER" >> $GITHUB_ENV
+
   check-release:
-    needs:
-      - set-versions
+    needs: set-versions
     runs-on: ubuntu-20.04
     outputs:      
       already-exists: ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}
@@ -63,6 +46,7 @@ jobs:
         run: |
           echo "Ghidra ver: ${{ needs.set-versions.outputs.ghidra-ver }} PYI ver: ${{ needs.set-versions.outputs.pyi-ver }} PYI Release: ${{needs.set-versions.outputs.pyi-rel-ver}} Current Release: ${{steps.self.outputs.release }}"
           echo "already exists ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}"
+
   build-n-publish:
     needs: 
       - set-versions
@@ -77,14 +61,13 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 1.11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
+          java-version: '17'
           distribution: 'temurin'
-          java-version: '11'
 
-
-      - uses: er28-0652/setup-ghidra@master
+      - uses: antoniovazquezblanco/setup-ghidra@v2.0.3
         with:
           version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
@@ -127,7 +110,6 @@ jobs:
 
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-
 
       - name: Release on GitHub
         uses: softprops/action-gh-release@v1
