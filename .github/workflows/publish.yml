@@ -67,7 +67,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - uses: antoniovazquezblanco/setup-ghidra@2.0.3
+      - uses: antoniovazquezblanco/setup-ghidra@v2.0.3
         with:
           version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
