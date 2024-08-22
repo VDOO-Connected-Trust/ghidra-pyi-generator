@@ -12,7 +12,7 @@ class BasicType(object):
 
     REPLACEMENTS = {
         'boolean': 'bool',
-        'java.lang.String': 'unicode',
+        'java.lang.String': 'Text',
         'java.lang.Object': 'object',
         'java.math.BigInteger': 'long',
         'long': 'long',
@@ -63,6 +63,8 @@ class BasicType(object):
             requires.add(('typing', 'List'))
         if self.is_iterator:
             requires.add(('typing', 'Iterator'))
+        if self.proper_name == 'Text':
+            requires.add(('typing', 'Text'))
         if '.' in self.proper_name and not self.is_builtin:
             requires.add(self.module)
 
