@@ -65,6 +65,8 @@ class BasicType(object):
             requires.add(('typing', 'Iterator'))
         if self.proper_name == 'Text':
             requires.add(('typing', 'Text'))
+        if self.proper_name == 'long':
+            requires.add(('py3_compatibility', '*'))
         if '.' in self.proper_name and not self.is_builtin:
             requires.add(self.module)
 
