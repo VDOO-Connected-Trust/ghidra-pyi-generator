@@ -2,7 +2,11 @@ from __future__ import print_function
 
 import os
 
-import ghidra.python.PythonScript
+try:
+    import ghidra.python.PythonScript as PythonScript
+except ImportError:
+    # 11.2 renamed everything to Jython
+    import ghidra.jython.JythonScript as PythonScript
 
 import helper
 import type_extractor
@@ -49,13 +53,13 @@ def is_ghidra_value(value):
 def is_ghidra_method(value):
     return (
         type(value).__name__ == 'instancemethod'
-        and getattr(value, 'im_class', None) == ghidra.python.PythonScript
+        and getattr(value, 'im_class', None) == PythonScript
     )
 
 
 def is_instance_property(name):
     try:
-        getattr(ghidra.python.PythonScript, name)
+        getattr(PythonScript, name)
     except AttributeError as e:
         if e.args[0].startswith('instance attr:'):
             return True
