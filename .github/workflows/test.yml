@@ -63,6 +63,10 @@ jobs:
         with:
           version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
+      - name: Get site-packages path
+        run: |
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath <(echo "import site"; echo "print site.getsitepackages()")
+
       - name: Prepare Jython Environment
         run: |
           mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
