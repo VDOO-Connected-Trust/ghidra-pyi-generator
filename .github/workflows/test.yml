@@ -66,7 +66,8 @@ jobs:
       - name: Get site-packages path
         run: |
           echo "import site; print site.getsitepackages()" > /tmp/script.py
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath /tmp/script.py -preScript /tmp/script.py
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript vendor_packages.py
+          find "$GHIDRA_INSTALL_DIR/Ghidra/Features/Ghidra/Features/Jython/lib/Lib/site-packages"
 
       - name: Prepare Jython Environment
         run: |
