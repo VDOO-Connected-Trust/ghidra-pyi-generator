@@ -2,6 +2,8 @@ from __future__ import print_function
 
 import os
 
+import ghidra 
+
 try:
     import ghidra.python.PythonScript as PythonScript
 except ImportError:
