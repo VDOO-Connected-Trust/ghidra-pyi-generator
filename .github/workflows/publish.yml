@@ -89,14 +89,7 @@ jobs:
 
       - name: Prepare Jython Environment
         run: |
-          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages/"
-
-          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages/"
-
-          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Ghidra/Features/Jython/lib/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Ghidra/Features/Jython/lib/Lib/site-packages/"
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript vendor_packages.py
 
       - name: Build Package
         run: |
