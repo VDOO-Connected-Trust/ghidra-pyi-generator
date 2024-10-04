@@ -65,7 +65,8 @@ jobs:
 
       - name: Get site-packages path
         run: |
-          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath <(echo "import site"; echo "print site.getsitepackages()") -preScript <(echo "import site"; echo "print site.getsitepackages()")
+          echo "import site; print site.getsitepackages()" > /tmp/script.py
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath /tmp/script.py -preScript /tmp/script.py
 
       - name: Prepare Jython Environment
         run: |
