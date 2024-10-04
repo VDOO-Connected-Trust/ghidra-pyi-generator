@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       workflow-ghidra-ver:
-        description: 'Specify Ghidra Version to Build'
+        description: "Specify Ghidra Version to Build"
         required: true
         type: string
-        default: 'latest'
+        default: "latest"
 
 jobs:
   set-versions:
@@ -33,7 +33,7 @@ jobs:
           echo "GHIDRA_VER=$(echo ${{steps.get_latest_ghidra_ver.outputs.release}} | cut -d_ -f2)" >> $GITHUB_ENV
       - name: Set Ghidra Version from Input
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest'
-        run: |             
+        run: |
           echo "GHIDRA_VER=$(echo ${{github.event.inputs.workflow-ghidra-ver}})" >> $GITHUB_ENV
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -56,21 +56,23 @@ jobs:
       - name: Set up JDK 1.11
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
-
+          distribution: "temurin"
+          java-version: "11"
 
       - uses: er28-0652/setup-ghidra@master
         with:
           version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
       - name: Prepare Jython Environment
-        run: | 
+        run: |
           mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
           cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages/"
-          
+
           mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
           cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages/"
+
+          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Ghidra/Features/Jython/lib/Lib/site-packages"
+          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Ghidra/Features/Jython/lib/Lib/site-packages/"
 
       - name: Build Package
         run: |
