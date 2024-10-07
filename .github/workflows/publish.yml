@@ -3,14 +3,14 @@ name: Publish Tagged Commit to PyPI
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_dispatch:
     inputs:
       workflow-ghidra-ver:
-        description: 'Specify Ghidra Version to Build'
+        description: "Specify Ghidra Version to Build"
         required: true
         type: string
-        default: 'latest'
+        default: "latest"
   schedule:
     - cron: "0 13 * * 3"
 
@@ -36,7 +36,7 @@ jobs:
           echo "GHIDRA_VER=$(echo ${{steps.get_latest_ghidra_ver.outputs.release}} | cut -d_ -f2)" >> $GITHUB_ENV
       - name: Set Ghidra Version from Input
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest'
-        run: |             
+        run: |
           echo "GHIDRA_VER=$(echo ${{github.event.inputs.workflow-ghidra-ver}})" >> $GITHUB_ENV
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -52,7 +52,7 @@ jobs:
     needs:
       - set-versions
     runs-on: ubuntu-20.04
-    outputs:      
+    outputs:
       already-exists: ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}
     steps:
       - id: self
@@ -64,7 +64,7 @@ jobs:
           echo "Ghidra ver: ${{ needs.set-versions.outputs.ghidra-ver }} PYI ver: ${{ needs.set-versions.outputs.pyi-ver }} PYI Release: ${{needs.set-versions.outputs.pyi-rel-ver}} Current Release: ${{steps.self.outputs.release }}"
           echo "already exists ${{ contains( steps.self.outputs.release, needs.set-versions.outputs.pyi-rel-ver ) }}"
   build-n-publish:
-    needs: 
+    needs:
       - set-versions
       - check-release
     if: needs.check-release.outputs.already-exists == 'false' || (github.event_name == 'workflow_dispatch' && github.event.inputs.workflow-ghidra-ver != 'latest')
@@ -80,21 +80,16 @@ jobs:
       - name: Set up JDK 1.11
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
-
+          distribution: "temurin"
+          java-version: "21"
 
       - uses: er28-0652/setup-ghidra@master
         with:
           version: "${{ needs.set-versions.outputs.ghidra-ver }}"
 
       - name: Prepare Jython Environment
-        run: | 
-          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.2/Lib/site-packages/"
-          
-          mkdir -p "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages"
-          cp -r vendor/* "$GHIDRA_INSTALL_DIR/Ghidra/Features/Python/data/jython-2.7.3/Lib/site-packages/"
+        run: |
+          "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" /tmp tmp -scriptPath $(pwd) -preScript vendor_packages.py
 
       - name: Build Package
         run: |
@@ -128,7 +123,6 @@ jobs:
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-
       - name: Release on GitHub
         uses: softprops/action-gh-release@v1
         with:
@@ -136,5 +130,3 @@ jobs:
           tag_name: "v${{ needs.set-versions.outputs.pyi-rel-ver }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          
