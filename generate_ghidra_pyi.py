@@ -17,6 +17,7 @@ import class_loader
 import type_extractor
 import pythonscript_handler
 import helper
+import os
 
 my_globals = globals().copy()
 
@@ -36,6 +37,10 @@ def main():
     class_loader.load_all_classes(prefix='ghidra.')
 
     pythonscript_handler.create_mock(pyi_root, my_globals)
+
+    compatibility_path = os.path.join(pyi_root, 'py3_compatibility.pyi')
+    with open(compatibility_path, 'w') as f:
+        f.write('import sys\nif sys.version_info.major >= 3:\n    long = int\n')
 
     ghidra_package = type_extractor.Package.from_package(ghidra)
     type_formatter.create_type_hints(pyi_root, ghidra_package)
