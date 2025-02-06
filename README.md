@@ -1,5 +1,12 @@
 # Ghidra `.pyi` Generator
 
+> [!IMPORTANT]
+> Great news!
+> 
+> Ghidra is now (as of version 11.3) publishing official stubs under the [ghidra-stubs](https://pypi.org/project/ghidra-stubs/) package, replacing this project.
+>
+> This repository will be archived and no longer maintained.
+
 The Ghidra `.pyi` Generator generates `.pyi` [type stubs][pep-0484]
 for the entire Ghidra API.
 Those stub files can later be used in PyCharm to enhance the development experience.
